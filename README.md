@@ -1,4 +1,13 @@
-# Startools
+# STARTOOLS
+
+STARTOOLS is a startup model written in plain PHP 8.2 with no dependencies. It models what a company must show to reach a one billion dollar exit.
+
+The interface moves from the whole model into its parts. Six tiers trace the path from bootstrap and validation through Seed, Series A, Series B and Series C to exit.
+
+The founder can change assumptions across four connected tabs. Three scenarios compare customer growth. The model tracks money in whole cents, applies churn to existing customers and compounds the worst case month by month.
+
+The round calculator takes pre-money value, investment and stake sold. It returns post-money value, dilution and new ownership, and rejects rounds with invalid results. The model also lists investor questions and the gaps a company still needs to address.
+
 
 A modelling tool for startups. It takes a founder from the first idea to the
 shape an investor expects to read.
