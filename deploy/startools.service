@@ -1,0 +1,23 @@
+[Unit]
+Description=Startools startup model
+After=network.target
+
+[Service]
+Type=simple
+User=opc
+Group=opc
+WorkingDirectory=/srv/startools
+Environment=STARTOOLS_BASE=/startools/
+ExecStart=/usr/bin/php -S 127.0.0.1:8097 -t showroom showroom/index.php
+Restart=on-failure
+RestartSec=2
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/startools
+MemoryDenyWriteExecute=false
+
+[Install]
+WantedBy=multi-user.target
