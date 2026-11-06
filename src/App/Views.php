@@ -68,7 +68,8 @@ HTML;
             ['Finance', 'Shows how financial assumptions affect the other tabs.'],
             ['Product ideation', 'Explores product assumptions within the same model.'],
         ];
-        $out = '<h1>' . $TITLE . '</h1>' . "\n";
+        $out = $this->header($TITLE);
+        $out .= '<h1>' . $TITLE . '</h1>' . "\n";
         $out .= '<p class="lede">' . $LEDGER . '</p>' . "\n";
         $out .= '<p class="motto">' . $MOTTO . '</p>' . "\n";
         $out .= '<p class="motto">' . $this->h($company) . ' at stage ' . $this->h($book->stage) . '</p>' . "\n";
@@ -77,6 +78,18 @@ HTML;
             $out .= '<tr><td><strong>' . $name . '</strong></td><td>' . $line . '</td></tr>' . "\n";
         }
         $out .= '</tbody></table>' . "\n";
+
+        $areas = $this->areas();
+        $out .= '<h2 class="areas-head">' . $this->h($areas['heading']) . '</h2>' . "\n";
+        $out .= '<p class="small">' . $this->h($areas['flow']) . '</p>' . "\n";
+        $out .= '<div class="areas">' . "\n";
+        foreach ($areas['areas'] as [$name, $line]) {
+            $out .= '<article class="area"><h3>' . $this->h($name) . '</h3>'
+                . '<p>' . $this->h($line) . '</p></article>' . "\n";
+        }
+        $out .= '</div>' . "\n";
+        $out .= '<p class="small">' . $this->h($areas['note']) . '</p>' . "\n";
+
         $out .= '<h2>Four tabs on one model</h2>' . "\n";
         $out .= '<ul class="tabs">';
         foreach ($tabs as [$name, $line]) { $out .= '<li><strong>' . $name . '.</strong> ' . $line . '</li>'; }
@@ -91,10 +104,32 @@ HTML;
         return $out . $this->footer();
     }
 
+    private function areas(): array
+    {
+        return [
+            'heading' => 'Eleven working areas turn the model into an investor-ready plan.',
+            'flow' => 'Start with the investment ladder, then model the eleven areas that support each tier.',
+            'note' => 'Each stage shows investor questions, three scenarios, a month-by-month plan, and the evidence still missing.',
+            'areas' => [
+            ['Investment Tiers', 'Model each funding stage, founder dilution, capital raised, and the proof required to reach the next tier.'],
+            ['Contracts and Documents', 'Track the contracts, legal documents, ownership records, and supporting evidence investors need to assess the company.'],
+            ['Sales and Growth', 'Model revenue, customer acquisition, sales performance, and growth needed to support the next investment tier.'],
+            ['EBITDA', 'Forecast earnings before interest, taxes, depreciation, and amortization to assess operating performance and business value.'],
+            ['Multiples', 'Model valuation multiples and show how earnings translate into potential company value at each stage.'],
+            ['Projections', 'Build month-by-month projections across revenue, costs, growth, and operating performance for three scenarios.'],
+            ['CAC and LTV', 'Model customer acquisition cost and lifetime value to assess acquisition economics and customer profitability.'],
+            ['Market Size and Dimension', 'Define the market, estimate its size, and show the opportunity the company can capture.'],
+            ['Accounting', 'Organize financial records, revenue, expenses, and reporting to establish reliable accounting evidence.'],
+            ['Finances', 'Model cash flow, funding needs, financial position, and capital requirements throughout the company\'s growth.'],
+            ['Ideation', 'Develop product ideas, test assumptions, and connect product decisions to market demand and business growth.'],
+            ],
+        ];
+    }
+
     private function scenarioTable(Book $book): string
     {
         $out = '<table><thead><tr><th>Scenario</th><th>Customers</th><th>Total profit</th>'
-            . '<th>Worst cash</th><th>Break even</th><th>Payback</th></tr></thead><tbody>' . "\\n";
+            . '<th>Worst cash</th><th>Break even</th><th>Payback</th></tr></thead><tbody>' . "\n";
         foreach ($book->scenarios as $scenario) {
             $f = $scenario->forecast;
             $out .= '<tr><td>' . $this->h(ucfirst($scenario->name)) . '</td>'
@@ -102,17 +137,17 @@ HTML;
                 . '<td class="n">' . $f->totalProfit()->format() . '</td>'
                 . '<td class="n">' . $f->worstCumulative()->format() . '</td>'
                 . '<td class="n">' . ($f->breakEvenMonth() ?? 'none') . '</td>'
-                . '<td class="n">' . ($f->paybackMonth() ?? 'none') . '</td></tr>' . "\\n";
+                . '<td class="n">' . ($f->paybackMonth() ?? 'none') . '</td></tr>' . "\n";
         }
 
-        return $out . '</tbody></table>' . "\\n";
+        return $out . '</tbody></table>' . "\n";
     }
 
     private function monthTable(Scenario $scenario): string
     {
         $out = '<table><thead><tr><th>Month</th><th>New</th><th>Churned</th><th>Customers</th>'
             . '<th>Revenue</th><th>Variable</th><th>Fixed</th><th>Profit</th><th>Cumulative</th>'
-            . '</tr></thead><tbody>' . "\\n";
+            . '</tr></thead><tbody>' . "\n";
         foreach ($scenario->forecast->months as $month) {
             $out .= '<tr><td class="n">' . $month->month . '</td>'
                 . '<td class="n">' . $month->newCustomers . '</td>'
@@ -122,46 +157,46 @@ HTML;
                 . '<td class="n">' . $month->variableCost->format() . '</td>'
                 . '<td class="n">' . $month->fixedCost->format() . '</td>'
                 . '<td class="n">' . $month->profit->format() . '</td>'
-                . '<td class="n">' . $month->cumulative->format() . '</td></tr>' . "\\n";
+                . '<td class="n">' . $month->cumulative->format() . '</td></tr>' . "\n";
         }
 
-        return $out . '</tbody></table>' . "\\n";
+        return $out . '</tbody></table>' . "\n";
     }
 
     private function roundTable(\Startools\Model\Round $round): string
     {
         $rows = $round->toArray();
-        $out = '<table><tbody>' . "\\n";
-        $out .= '<tr><th>Raising</th><td class="n">' . $rows['raising'] . '</td></tr>' . "\\n";
-        $out .= '<tr><th>Pre money</th><td class="n">' . $rows['pre_money'] . '</td></tr>' . "\\n";
-        $out .= '<tr><th>Post money</th><td class="n">' . $rows['post_money'] . '</td></tr>' . "\\n";
-        $out .= '<tr><th>Investor holds</th><td class="n">' . $rows['dilution'] . '%</td></tr>' . "\\n";
+        $out = '<table><tbody>' . "\n";
+        $out .= '<tr><th>Raising</th><td class="n">' . $rows['raising'] . '</td></tr>' . "\n";
+        $out .= '<tr><th>Pre money</th><td class="n">' . $rows['pre_money'] . '</td></tr>' . "\n";
+        $out .= '<tr><th>Post money</th><td class="n">' . $rows['post_money'] . '</td></tr>' . "\n";
+        $out .= '<tr><th>Investor holds</th><td class="n">' . $rows['dilution'] . '%</td></tr>' . "\n";
 
-        return $out . '</tbody></table>' . "\\n";
+        return $out . '</tbody></table>' . "\n";
     }
 
     /** @param list<string> $questions */
     private function questions(string $stage): string
     {
-        $out = '<ul>' . "\\n";
+        $out = '<ul>' . "\n";
         foreach (Stage::questions($stage) as $question) {
-            $out .= '<li>' . $this->h($question) . '</li>' . "\\n";
+            $out .= '<li>' . $this->h($question) . '</li>' . "\n";
         }
 
-        return $out . '</ul>' . "\\n";
+        return $out . '</ul>' . "\n";
     }
 
     private function gaps(Scenario $scenario): string
     {
         if ($scenario->readiness->gaps === []) {
-            return '<p class="ok">The model answers every question this stage raises.</p>' . "\\n";
+            return '<p class="ok">The model answers every question this stage raises.</p>' . "\n";
         }
-        $out = '<ul class="gaps">' . "\\n";
+        $out = '<ul class="gaps">' . "\n";
         foreach ($scenario->readiness->gaps as $gap) {
-            $out .= '<li>' . $this->h($gap) . '</li>' . "\\n";
+            $out .= '<li>' . $this->h($gap) . '</li>' . "\n";
         }
 
-        return $out . '</ul>' . "\\n";
+        return $out . '</ul>' . "\n";
     }
 
     public function brief(string $text): string

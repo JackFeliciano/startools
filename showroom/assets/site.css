@@ -52,3 +52,10 @@ a { color: var(--mark); }
     body { padding: 1.5rem 0.75rem 3rem; }
     table { font-size: 0.82rem; }
 }
+
+/* The eleven working areas, one card each, under the investment ladder */
+.areas { display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); margin: 1rem 0 1.4rem; }
+.area { border: 1px solid var(--rule); border-top: 3px solid var(--mark); background: #fff; padding: 0.9rem 1rem 0.85rem; }
+.area h3 { margin: 0 0 0.4rem; font-family: Georgia, serif; font-size: 1rem; font-weight: normal; color: var(--ink); }
+.area p { margin: 0; font-size: 0.88rem; color: #4a4a4a; line-height: 1.5; }
+h2.areas-head { font-size: 1.28rem; margin-top: 2rem; }
